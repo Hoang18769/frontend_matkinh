@@ -1,0 +1,4 @@
+const General=()=>{
+
+}
+export defa

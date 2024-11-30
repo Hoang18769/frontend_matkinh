@@ -1,50 +1,49 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import NavTitle from "./NavTitle";
+import axios from "axios";
 
 const Price = () => {
-  const priceList = [
-    {
-      _id: 950,
-      priceOne: 0.0,
-      priceTwo: 49.99,
-    },
-    {
-      _id: 951,
-      priceOne: 50.0,
-      priceTwo: 99.99,
-    },
-    {
-      _id: 952,
-      priceOne: 100.0,
-      priceTwo: 199.99,
-    },
-    {
-      _id: 953,
-      priceOne: 200.0,
-      priceTwo: 399.99,
-    },
-    {
-      _id: 954,
-      priceOne: 400.0,
-      priceTwo: 599.99,
-    },
-    {
-      _id: 955,
-      priceOne: 600.0,
-      priceTwo: 1000.0,
-    },
-  ];
+  const [productShop, setProduct] = useState([]);
+  const [minPrice,setMinPrice]=useState(0)
+  const [maxPrice,setmaxPrice]=useState(800000)
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        "https://matkinhcaolo.io.vn/api/product"
+      );
+      console.log(response);
+      setProduct(response.data.results);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const handlePrice=(event)=>{
+    const {value}=event.target;
+    setmaxPrice(value)
+  }
+  const filterProduct=productShop.filter((item)=>item.price_product>=minPrice &&item.price_product<=maxPrice)
+  
   return (
     <div className="cursor-pointer">
       <NavTitle title="Shop by Price" icons={false} />
       <div className="font-titleFont">
         <ul className="flex flex-col gap-4 text-sm lg:text-base text-[#767676]">
-          {priceList.map((item) => (
+          {filterProduct.map((item) => (
             <li
-              key={item._id}
+              key={item.id_product}
               className="border-b-[1px] border-b-[#F0F0F0] pb-2 flex items-center gap-2 hover:text-primeColor hover:border-gray-400 duration-300"
-            >
-              ${item.priceOne.toFixed(2)} - ${item.priceTwo.toFixed(2)}
+                type="range"
+      class="form-range"
+      id="customRange1"
+      min="0"
+      max="800000"
+      value={maxPrice}
+      onChange={handlePrice}>
+            
+              ${item.price_product}
             </li>
           ))}
         </ul>
